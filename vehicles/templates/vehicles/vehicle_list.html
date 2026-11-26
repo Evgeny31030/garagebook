@@ -1,4 +1,5 @@
 {% extends "vehicles/base.html" %}
+{% load static %}
 
 {% block title %}My garage | GarageBook{% endblock %}
 
@@ -17,14 +18,19 @@
         {% if vehicles %}
             <div class="vehicle-list">
                 {% for vehicle in vehicles %}
-                    <a class="vehicle-card{% if forloop.first %} selected{% endif %}" href="{% url 'vehicle_detail' vehicle.pk %}">
+                    <button class="vehicle-card{% if forloop.first %} selected{% endif %}" type="button"
+                            data-vehicle-card
+                            data-name="{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}"
+                            data-mileage="{{ vehicle.current_mileage }}"
+                            data-url="{% url 'vehicle_detail' vehicle.pk %}"
+                            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
                         <span class="vehicle-icon" aria-hidden="true">🚘</span>
                         <span class="vehicle-card-copy">
                             <strong>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</strong>
                             <span>{{ vehicle.current_mileage }} km</span>
                         </span>
                         <span class="vehicle-arrow" aria-hidden="true">›</span>
-                    </a>
+                    </button>
                 {% endfor %}
             </div>
         {% else %}
@@ -43,20 +49,21 @@
             <div class="preview-heading">
                 <span class="vehicle-icon vehicle-icon-large" aria-hidden="true">🚘</span>
                 <div>
-                    <h2 id="preview-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
+                    <h2 id="preview-title" data-preview-name>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
                     <span class="badge">My vehicle</span>
                 </div>
             </div>
             <div class="stat-card">
                 <span class="stat-label">Current mileage</span>
-                <strong>{{ vehicle.current_mileage }} km</strong>
+                <strong data-preview-mileage>{{ vehicle.current_mileage }} km</strong>
             </div>
             <div class="preview-footer">
                 <p>Open this vehicle to view its details. Maintenance history will appear here as the project grows.</p>
-                <a class="button button-secondary" href="{% url 'vehicle_detail' vehicle.pk %}">View vehicle <span aria-hidden="true">→</span></a>
+                <a class="button button-secondary" data-preview-link href="{% url 'vehicle_detail' vehicle.pk %}">View vehicle <span aria-hidden="true">→</span></a>
             </div>
         </section>
         {% endwith %}
     {% endif %}
 </div>
+<script src="{% static 'vehicles/garage.js' %}" defer></script>
 {% endblock %}
