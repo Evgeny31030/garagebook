@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GarageBook | My vehicles</title>
+</head>
+<body>
+    <h1>GarageBook</h1>
+    <h2>My vehicles</h2>
+
+    <p><a href="{% url 'vehicle_create' %}">Add a vehicle</a></p>
+
+    {% if vehicles %}
+        <ul>
+            {% for vehicle in vehicles %}
+                <li>
+                    <a href="{% url 'vehicle_detail' vehicle.pk %}">
+                        {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
+                    </a>
+                    — {{ vehicle.current_mileage }} km
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No vehicles yet. Add your first one.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GarageBook | {{ vehicle.make }} {{ vehicle.model }}</title>
+</head>
+<body>
+    <h1>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h1>
+    <p>Current mileage: {{ vehicle.current_mileage }} km</p>
+
+    <p><a href="{% url 'vehicle_list' %}">Back to vehicles</a></p>
+</body>
+</html>
