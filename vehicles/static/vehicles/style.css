@@ -78,7 +78,7 @@ h2 { letter-spacing: -.025em; }
 .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 17px; font-size: 23px; }
 .count { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 8px; background: var(--panel-soft); color: var(--muted); font-size: 14px; }
 .vehicle-list { display: grid; gap: 14px; }
-.vehicle-card { display: flex; align-items: center; gap: 16px; min-height: 116px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow); text-decoration: none; transition: border-color .18s, transform .18s; }
+.vehicle-card { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 116px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); color: var(--text); box-shadow: var(--shadow); text-align: left; font: inherit; cursor: pointer; transition: border-color .18s, transform .18s; }
 .vehicle-card:hover { transform: translateY(-3px); border-color: var(--primary); }
 .vehicle-card.selected { border: 2px solid var(--primary); background: var(--selected); }
 .vehicle-icon, .empty-icon { flex: 0 0 auto; display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 16px; background: var(--panel-soft); color: var(--text); font-size: 27px; }
