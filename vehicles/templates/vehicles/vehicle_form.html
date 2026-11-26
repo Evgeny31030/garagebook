@@ -1,31 +1,60 @@
 {% extends "vehicles/base.html" %}
 
-{% block title %}Add vehicle | GarageBook{% endblock %}
+{% block title %}
+    {% if is_edit %}Edit vehicle{% else %}Add vehicle{% endif %} | GarageBook
+{% endblock %}
 
 {% block content %}
-<a class="back-link" href="{% url 'vehicle_list' %}">← Back to garage</a>
+<a class="back-link"
+   href="{% if is_edit %}{% url 'vehicle_detail' vehicle.pk %}{% else %}{% url 'vehicle_list' %}{% endif %}">
+    ← {% if is_edit %}Back to vehicle{% else %}Back to garage{% endif %}
+</a>
+
 <div class="form-layout">
     <div class="page-heading">
         <div>
-            <p class="eyebrow">NEW VEHICLE</p>
-            <h1>Add a vehicle</h1>
-            <p class="page-subtitle">Give your car a place in your garage.</p>
+            <p class="eyebrow">{% if is_edit %}YOUR VEHICLE{% else %}NEW VEHICLE{% endif %}</p>
+            <h1>{% if is_edit %}Edit vehicle{% else %}Add a vehicle{% endif %}</h1>
+            <p class="page-subtitle">
+                {% if is_edit %}
+                    Update your vehicle's details and current mileage.
+                {% else %}
+                    Give your car a place in your garage.
+                {% endif %}
+            </p>
         </div>
     </div>
+
     <form class="panel vehicle-form" method="post">
         {% csrf_token %}
-        {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
         {% for field in form %}
             <div class="form-field">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
-                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
-                {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="field-errors">{{ field.errors }}</div>
+                {% endif %}
             </div>
         {% endfor %}
+
         <div class="form-actions">
-            <button class="button button-primary" type="submit">Save vehicle</button>
-            <a class="button button-quiet" href="{% url 'vehicle_list' %}">Cancel</a>
+            <button class="button button-primary" type="submit">
+                {% if is_edit %}Save changes{% else %}Save vehicle{% endif %}
+            </button>
+            <a class="button button-quiet"
+               href="{% if is_edit %}{% url 'vehicle_detail' vehicle.pk %}{% else %}{% url 'vehicle_list' %}{% endif %}">
+                Cancel
+            </a>
         </div>
     </form>
 </div>

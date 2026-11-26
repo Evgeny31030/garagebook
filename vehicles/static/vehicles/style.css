@@ -131,4 +131,5 @@ h2 { letter-spacing: -.025em; }
     .vehicle-icon-large { width: 68px; height: 68px; }
     .preview-heading { gap: 12px; }
     .theme-choice { padding: 8px 10px; }
+    .detail-actions { margin: 22px 0 0; }
 }
