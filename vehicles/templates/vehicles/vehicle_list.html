@@ -1,29 +1,69 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GarageBook | My vehicles</title>
-</head>
-<body>
-    <h1>GarageBook</h1>
-    <h2>My vehicles</h2>
+{% extends "vehicles/base.html" %}
+{% load static %}
 
-    <p><a href="{% url 'vehicle_create' %}">Add a vehicle</a></p>
+{% block title %}My garage | GarageBook{% endblock %}
 
+{% block content %}
+<div class="page-heading">
+    <div>
+        <p class="eyebrow">YOUR GARAGE</p>
+        <h1>My garage</h1>
+        <p class="page-subtitle">Keep every vehicle and service in one place.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'vehicle_create' %}"><span aria-hidden="true">＋</span> Add vehicle</a>
+</div>
+<div class="garage-grid">
+    <section aria-labelledby="vehicle-list-title">
+        <h2 class="section-title" id="vehicle-list-title">Your vehicles <span class="count">{{ vehicles|length }}</span></h2>
+        {% if vehicles %}
+            <div class="vehicle-list">
+                {% for vehicle in vehicles %}
+                    <button class="vehicle-card{% if forloop.first %} selected{% endif %}" type="button"
+                            data-vehicle-card
+                            data-name="{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}"
+                            data-mileage="{{ vehicle.current_mileage }}"
+                            data-url="{% url 'vehicle_detail' vehicle.pk %}"
+                            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                        <span class="vehicle-icon" aria-hidden="true">🚘</span>
+                        <span class="vehicle-card-copy">
+                            <strong>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</strong>
+                            <span>{{ vehicle.current_mileage }} km</span>
+                        </span>
+                        <span class="vehicle-arrow" aria-hidden="true">›</span>
+                    </button>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="panel empty-state">
+                <span class="empty-icon" aria-hidden="true">🚘</span>
+                <h3>Your garage is ready</h3>
+                <p>Add your first vehicle to start tracking its details.</p>
+                <a class="button button-primary" href="{% url 'vehicle_create' %}">Add your first vehicle</a>
+            </div>
+        {% endif %}
+    </section>
     {% if vehicles %}
-        <ul>
-            {% for vehicle in vehicles %}
-                <li>
-                    <a href="{% url 'vehicle_detail' vehicle.pk %}">
-                        {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
-                    </a>
-                    — {{ vehicle.current_mileage }} km
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No vehicles yet. Add your first one.</p>
+        {% with vehicle=vehicles.0 %}
+        <section class="panel preview-panel" aria-labelledby="preview-title">
+            <p class="eyebrow">VEHICLE PREVIEW</p>
+            <div class="preview-heading">
+                <span class="vehicle-icon vehicle-icon-large" aria-hidden="true">🚘</span>
+                <div>
+                    <h2 id="preview-title" data-preview-name>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h2>
+                    <span class="badge">My vehicle</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Current mileage</span>
+                <strong data-preview-mileage>{{ vehicle.current_mileage }} km</strong>
+            </div>
+            <div class="preview-footer">
+                <p>Open this vehicle to view its details. Maintenance history will appear here as the project grows.</p>
+                <a class="button button-secondary" data-preview-link href="{% url 'vehicle_detail' vehicle.pk %}">View vehicle <span aria-hidden="true">→</span></a>
+            </div>
+        </section>
+        {% endwith %}
     {% endif %}
-</body>
-</html>
+</div>
+<script src="{% static 'vehicles/garage.js' %}" defer></script>
+{% endblock %}

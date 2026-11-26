@@ -1,19 +1,32 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GarageBook | Add vehicle</title>
-</head>
-<body>
-    <h1>Add a vehicle</h1>
+{% extends "vehicles/base.html" %}
 
-    <form method="post">
+{% block title %}Add vehicle | GarageBook{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{% url 'vehicle_list' %}">← Back to garage</a>
+<div class="form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">NEW VEHICLE</p>
+            <h1>Add a vehicle</h1>
+            <p class="page-subtitle">Give your car a place in your garage.</p>
+        </div>
+    </div>
+    <form class="panel vehicle-form" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save vehicle</button>
+        {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button class="button button-primary" type="submit">Save vehicle</button>
+            <a class="button button-quiet" href="{% url 'vehicle_list' %}">Cancel</a>
+        </div>
     </form>
-
-    <p><a href="{% url 'vehicle_list' %}">Back to vehicles</a></p>
-</body>
-</html>
+</div>
+{% endblock %}

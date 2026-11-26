@@ -1,14 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GarageBook | {{ vehicle.make }} {{ vehicle.model }}</title>
-</head>
-<body>
-    <h1>{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h1>
-    <p>Current mileage: {{ vehicle.current_mileage }} km</p>
+{% extends "vehicles/base.html" %}
 
-    <p><a href="{% url 'vehicle_list' %}">Back to vehicles</a></p>
-</body>
-</html>
+{% block title %}{{ vehicle.make }} {{ vehicle.model }} | GarageBook{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{% url 'vehicle_list' %}">← Back to garage</a>
+<div class="detail-layout">
+    <section class="panel detail-panel" aria-labelledby="vehicle-title">
+        <p class="eyebrow">YOUR VEHICLE</p>
+        <div class="preview-heading">
+            <span class="vehicle-icon vehicle-icon-large" aria-hidden="true">🚘</span>
+            <div>
+                <h1 id="vehicle-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h1>
+                <span class="badge">My vehicle</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Current mileage</span>
+            <strong>{{ vehicle.current_mileage }} km</strong>
+        </div>
+    </section>
+    <section class="panel detail-panel" aria-labelledby="service-title">
+        <p class="eyebrow">COMING NEXT</p>
+        <h2 id="service-title">Service history</h2>
+        <p class="muted">Maintenance records and expenses for this vehicle will appear here soon.</p>
+    </section>
+</div>
+{% endblock %}
