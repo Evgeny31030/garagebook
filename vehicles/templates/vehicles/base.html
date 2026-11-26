@@ -1,0 +1,47 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>{% block title %}GarageBook{% endblock %}</title>
+    <script>
+        try {
+            document.documentElement.dataset.theme = localStorage.getItem("garagebook-theme") || "light";
+        } catch (error) {
+            document.documentElement.dataset.theme = "light";
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'vehicles/style.css' %}">
+    <script src="{% static 'vehicles/theme.js' %}" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Site navigation">
+            <a class="brand" href="{% url 'vehicle_list' %}" aria-label="GarageBook home">
+                <span class="brand-icon" aria-hidden="true">🚘</span>
+                <span>GarageBook</span>
+            </a>
+            <nav aria-label="Main navigation">
+                <a class="nav-link active" href="{% url 'vehicle_list' %}">
+                    <span aria-hidden="true">⌂</span> My garage
+                </a>
+            </nav>
+            <p class="sidebar-note">A simpler way to care for your car.</p>
+        </aside>
+        <div class="workspace">
+            <header class="topbar">
+                <div class="topbar-brand">GarageBook</div>
+                <div class="theme-control" role="group" aria-label="Color theme">
+                    <button class="theme-choice" type="button" data-theme-choice="light" aria-pressed="true"><span aria-hidden="true">☀</span> Light</button>
+                    <button class="theme-choice" type="button" data-theme-choice="dark" aria-pressed="false"><span aria-hidden="true">☾</span> Dark</button>
+                </div>
+            </header>
+            <main class="main-content" id="main-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+</html>
