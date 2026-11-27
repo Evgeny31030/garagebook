@@ -8,38 +8,83 @@
 <div class="detail-layout">
     <section class="panel detail-panel" aria-labelledby="vehicle-title">
         <p class="eyebrow">YOUR VEHICLE</p>
-
         <div class="preview-heading">
             <span class="vehicle-icon vehicle-icon-large" aria-hidden="true">🚘</span>
             <div>
-                <h1 id="vehicle-title">
-                    {{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}
-                </h1>
+                <h1 id="vehicle-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</h1>
                 <span class="badge">My vehicle</span>
             </div>
         </div>
-
         <div class="stat-card">
             <span class="stat-label">Current mileage</span>
             <strong>{{ vehicle.current_mileage }} km</strong>
         </div>
-
         <p class="detail-actions">
-            <a class="button button-secondary" href="{% url 'vehicle_edit' vehicle.pk %}">
-                Edit vehicle
-            </a>
+            <a class="button button-secondary" href="{% url 'vehicle_edit' vehicle.pk %}">Edit vehicle</a>
         </p>
     </section>
 
     <section class="panel detail-panel" aria-labelledby="service-title">
         <p class="eyebrow">MAINTENANCE</p>
-        <h2 id="service-title">Service history</h2>
-
+        <h2 id="service-title">Service history &amp; plans</h2>
         <div class="stat-card maintenance-total">
-            <span class="stat-label">Total spent on this vehicle</span>
+            <span class="stat-label">Total spent on completed services</span>
             <strong>${{ total_maintenance_cost|floatformat:2 }}</strong>
+            <small class="muted">Planned estimates are not included.</small>
         </div>
 
+        <h3 class="maintenance-section-title">Upcoming maintenance</h3>
+        {% if planned_records %}
+            <ul class="maintenance-list">
+                {% for record in planned_records %}
+                    <li class="maintenance-item">
+                        <div class="maintenance-item-heading">
+                            <strong>{{ record.service_type }}</strong>
+                            <span class="maintenance-status">Planned</span>
+                        </div>
+                        <p class="muted maintenance-meta">
+                            {% if record.date %}Target date: {{ record.date|date:"d.m.Y" }}{% else %}Date not set{% endif %}
+                            · {% if record.mileage is not None %}Target: {{ record.mileage }} km{% else %}Mileage not set{% endif %}
+                        </p>
+                        <p class="muted maintenance-meta">
+                            {% if record.cost is not None %}Estimated cost: ${{ record.cost|floatformat:2 }}{% else %}Cost not estimated{% endif %}
+                        </p>
+                        {% if record.notes %}<p class="maintenance-notes">{{ record.notes|linebreaksbr }}</p>{% endif %}
+                        <div class="maintenance-plan-actions">
+                            <a class="button button-secondary maintenance-plan-action"
+                               href="{% url 'maintenance_complete' vehicle.pk record.pk %}">Mark as completed</a>
+                            <a class="button button-secondary maintenance-plan-action"
+                               href="{% url 'maintenance_plan_edit' vehicle.pk record.pk %}">Edit</a>
+                            <a class="button button-secondary maintenance-plan-action maintenance-delete-link"
+                               href="{% url 'maintenance_plan_delete' vehicle.pk record.pk %}">Delete</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted maintenance-empty">No upcoming services planned.</p>
+        {% endif %}
+
+        <details class="maintenance-entry-panel" {% if planned_form.errors %}open{% endif %}>
+            <summary>Add planned service</summary>
+            <p class="muted">Target date must be today or later; target mileage must be at least the current mileage ({{ vehicle.current_mileage }} km). Both fields are optional.</p>
+            <form method="post" class="maintenance-form" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="kind" value="planned">
+                {% if planned_form.non_field_errors %}<div class="form-errors">{{ planned_form.non_field_errors }}</div>{% endif %}
+                {% for field in planned_form %}
+                    <div class="form-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                        {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions"><button class="button button-primary" type="submit">Save plan</button></div>
+            </form>
+        </details>
+
+        <h3 class="maintenance-section-title">Completed services</h3>
         {% if maintenance_records %}
             <ul class="maintenance-list">
                 {% for record in maintenance_records %}
@@ -48,35 +93,30 @@
                             <strong>{{ record.service_type }}</strong>
                             <span class="maintenance-price">${{ record.cost|floatformat:2 }}</span>
                         </div>
-                        <p class="muted maintenance-meta">
-                            {{ record.date|date:"d.m.Y" }} · {{ record.mileage }} km
-                        </p>
-                        {% if record.notes %}
-                            <p class="maintenance-notes">{{ record.notes|linebreaksbr }}</p>
-                        {% endif %}
+                        <p class="muted maintenance-meta">{{ record.date|date:"d.m.Y" }} · {{ record.mileage }} km</p>
+                        {% if record.notes %}<p class="maintenance-notes">{{ record.notes|linebreaksbr }}</p>{% endif %}
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p class="muted maintenance-empty">No maintenance records yet.</p>
+            <p class="muted maintenance-empty">No completed maintenance records yet.</p>
         {% endif %}
 
-        <h3 class="maintenance-form-heading">Add maintenance record</h3>
-        <form method="post" class="maintenance-form">
+        <h3 class="maintenance-form-heading">Add completed service</h3>
+        <p class="muted">Record a service already performed, including before you owned this car.</p>
+        <form method="post" class="maintenance-form" novalidate>
             {% csrf_token %}
-            {% if maintenance_form.non_field_errors %}
-                <div class="form-errors">{{ maintenance_form.non_field_errors }}</div>
-            {% endif %}
-            {% for field in maintenance_form %}
+            <input type="hidden" name="kind" value="completed">
+            {% if completed_form.non_field_errors %}<div class="form-errors">{{ completed_form.non_field_errors }}</div>{% endif %}
+            {% for field in completed_form %}
                 <div class="form-field">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
+                    {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
                     {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
                 </div>
             {% endfor %}
-            <div class="form-actions">
-                <button class="button button-primary" type="submit">Save record</button>
-            </div>
+            <div class="form-actions"><button class="button button-primary" type="submit">Save completed service</button></div>
         </form>
     </section>
 </div>

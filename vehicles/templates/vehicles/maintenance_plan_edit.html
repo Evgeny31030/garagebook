@@ -1,0 +1,33 @@
+{% extends "vehicles/base.html" %}
+
+{% block title %}Edit planned service | GarageBook{% endblock %}
+
+{% block content %}
+<a class="back-link" href="{% url 'vehicle_detail' vehicle.pk %}">← Back to vehicle</a>
+<div class="form-layout">
+    <div class="page-heading">
+        <div>
+            <p class="eyebrow">MAINTENANCE</p>
+            <h1>Edit planned service</h1>
+            <p class="page-subtitle">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</p>
+        </div>
+    </div>
+    <form method="post" class="panel vehicle-form" novalidate>
+        {% csrf_token %}
+        <p class="muted">Correct the service name, target date, target mileage, estimated cost or notes. You can leave unknown details blank.</p>
+        {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button class="button button-primary" type="submit">Save changes</button>
+            <a class="button button-quiet" href="{% url 'vehicle_detail' vehicle.pk %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
