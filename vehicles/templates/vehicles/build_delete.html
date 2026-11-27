@@ -1,0 +1,3 @@
+{% extends "vehicles/base.html" %}
+{% block title %}Delete modification | GarageBook{% endblock %}
+{% block content %}<a class="back-link" href="{% url 'build_tracker' vehicle.pk %}">← Back to build</a><div class="form-layout"><h1>Delete modification?</h1><form method="post" class="panel vehicle-form">{% csrf_token %}<p>This permanently removes <strong>{{ modification.name }}</strong> from {{ vehicle }} and updates build totals.</p><div class="form-actions"><button class="button button-primary" type="submit">Yes, delete modification</button><a class="button button-quiet" href="{% url 'build_tracker' vehicle.pk %}">Cancel</a></div></form></div>{% endblock %}

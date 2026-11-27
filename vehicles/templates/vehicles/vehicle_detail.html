@@ -22,6 +22,10 @@
         <p class="detail-actions">
             <a class="button button-secondary" href="{% url 'vehicle_edit' vehicle.pk %}">Edit vehicle</a>
         </p>
+        <div class="feature-links">
+            <a class="button button-secondary" href="{% url 'car_health' vehicle.pk %}">Car Health</a>
+            <a class="button button-secondary" href="{% url 'build_tracker' vehicle.pk %}">Build Tracker</a>
+        </div>
     </section>
 
     <section class="panel detail-panel" aria-labelledby="service-title">
