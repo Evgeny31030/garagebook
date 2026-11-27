@@ -32,11 +32,52 @@
     </section>
 
     <section class="panel detail-panel" aria-labelledby="service-title">
-        <p class="eyebrow">COMING NEXT</p>
+        <p class="eyebrow">MAINTENANCE</p>
         <h2 id="service-title">Service history</h2>
-        <p class="muted">
-            Maintenance records and expenses for this vehicle will appear here soon.
-        </p>
+
+        <div class="stat-card maintenance-total">
+            <span class="stat-label">Total spent on this vehicle</span>
+            <strong>${{ total_maintenance_cost|floatformat:2 }}</strong>
+        </div>
+
+        {% if maintenance_records %}
+            <ul class="maintenance-list">
+                {% for record in maintenance_records %}
+                    <li class="maintenance-item">
+                        <div class="maintenance-item-heading">
+                            <strong>{{ record.service_type }}</strong>
+                            <span class="maintenance-price">${{ record.cost|floatformat:2 }}</span>
+                        </div>
+                        <p class="muted maintenance-meta">
+                            {{ record.date|date:"d.m.Y" }} · {{ record.mileage }} km
+                        </p>
+                        {% if record.notes %}
+                            <p class="maintenance-notes">{{ record.notes|linebreaksbr }}</p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted maintenance-empty">No maintenance records yet.</p>
+        {% endif %}
+
+        <h3 class="maintenance-form-heading">Add maintenance record</h3>
+        <form method="post" class="maintenance-form">
+            {% csrf_token %}
+            {% if maintenance_form.non_field_errors %}
+                <div class="form-errors">{{ maintenance_form.non_field_errors }}</div>
+            {% endif %}
+            {% for field in maintenance_form %}
+                <div class="form-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button class="button button-primary" type="submit">Save record</button>
+            </div>
+        </form>
     </section>
 </div>
 {% endblock %}

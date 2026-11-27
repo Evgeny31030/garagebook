@@ -133,3 +133,18 @@ h2 { letter-spacing: -.025em; }
     .theme-choice { padding: 8px 10px; }
     .detail-actions { margin: 22px 0 0; }
 }
+
+
+/* Vehicle maintenance history and entry form */
+.maintenance-total { margin: 22px 0; }
+.maintenance-list { list-style: none; padding: 0; margin: 0; }
+.maintenance-item { padding: 17px 0; border-bottom: 1px solid var(--border); }
+.maintenance-item-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.maintenance-item-heading strong { overflow-wrap: anywhere; }
+.maintenance-price { color: var(--primary); font-weight: 800; white-space: nowrap; }
+.maintenance-meta { margin: 8px 0 0; font-size: 14px; }
+.maintenance-notes { margin: 10px 0 0; overflow-wrap: anywhere; line-height: 1.5; }
+.maintenance-empty { margin: 22px 0; }
+.maintenance-form-heading { margin: 30px 0 20px; }
+.maintenance-form .form-field textarea { display: block; width: 100%; padding: 10px 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; resize: vertical; }
+.maintenance-form .form-field textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
