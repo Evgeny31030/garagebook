@@ -1,0 +1,9 @@
+{% extends "vehicles/base.html" %}
+{% block title %}{{ heading }} | GarageBook{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url back_url vehicle.pk %}">← Back</a><div class="form-layout"><div class="page-heading"><div><p class="eyebrow">{{ eyebrow }}</p><h1>{{ heading }}</h1><p class="page-subtitle">{{ vehicle }}</p></div></div>
+<form method="post" class="panel vehicle-form" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+{% for field in form %}<div class="form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+<div class="form-actions"><button class="button button-primary" type="submit">Save</button><a class="button button-quiet" href="{% url back_url vehicle.pk %}">Cancel</a></div></form></div>
+{% endblock %}

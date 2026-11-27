@@ -1,0 +1,21 @@
+{% extends "vehicles/base.html" %}
+{% block title %}Build Tracker | GarageBook{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'vehicle_detail' vehicle.pk %}">← Back to vehicle</a>
+<div class="page-heading"><div><p class="eyebrow">BUILD TRACKER</p><h1>{{ vehicle }} · Build</h1><p class="page-subtitle">Track upgrades, costs and measured performance.</p></div><a class="button button-primary" href="{% url 'modification_create' vehicle.pk %}">+ Add modification</a></div>
+<div class="feature-summary"><div class="stat-card"><span class="stat-label">Installed upgrades</span><strong>{{ installed.count }}</strong></div><div class="stat-card"><span class="stat-label">Actual build spending</span><strong>${{ spent|floatformat:2 }}</strong></div><div class="stat-card"><span class="stat-label">Known planned estimates</span><strong>${{ estimated|floatformat:2 }}</strong><small class="muted">{{ unknown_estimates }} plan(s) without estimate</small></div></div>
+<p class="muted">Build costs are separate from maintenance expenses. Measured power changes are per modification and are not added together.</p>
+<section class="panel detail-panel power-panel">
+<div class="power-heading"><div><p class="eyebrow">PERFORMANCE HISTORY</p><h2>Measured horsepower</h2><p class="muted">Latest recorded power</p><strong class="power-value">{% if power.latest_measurement %}{{ power.latest_measurement.hp }} hp{% else %}Not measured{% endif %}</strong>{% if power.latest_measurement %}<p class="muted">{{ power.latest_measurement.name }} · {{ power.latest_measurement.stage }} installation · {{ power.latest_measurement.date|date:"d.m.Y" }}</p>{% endif %}</div>{% if power.points %}<span class="muted">{{ power.points|length }} measurement{{ power.points|length|pluralize }}</span>{% endif %}</div>
+{% if power.points %}
+<svg viewBox="0 0 640 166" class="power-chart" role="img" aria-label="Measured horsepower trend in recorded sequence">
+{% for tick in power.ticks %}<line x1="56" y1="{{ tick.y }}" x2="604" y2="{{ tick.y }}" class="power-grid"/><text x="48" y="{{ tick.y }}" dy="4" text-anchor="end">{{ tick.hp }} hp</text>{% endfor %}
+{% if power.points|length > 1 %}<polyline points="{{ power.line }}" class="power-line"/>{% endif %}
+{% for point in power.points %}<circle cx="{{ point.x }}" cy="{{ point.y }}" r="4.5" class="power-point"><title>{{ point.name }} · {{ point.stage }} · {{ point.date|date:"d.m.Y" }} · {{ point.hp }} hp</title></circle>{% endfor %}
+<text x="56" y="158">Earlier</text><text x="604" y="158" text-anchor="end">Later</text></svg>
+<p class="muted">Actual measurements in installation-date order; spacing represents measurement sequence, not elapsed time. No estimated gains or planned upgrades are included.</p>
+<details class="replacement-history"><summary>View measurements</summary><ol>{% for point in power.points %}<li>{{ point.date|date:"d.m.Y" }} · {{ point.name }} · {{ point.stage }}: <strong>{{ point.hp }} hp</strong></li>{% endfor %}</ol></details>
+{% else %}<p class="muted">Add a measured before or after horsepower value to an installed modification to start the chart.</p>{% endif %}
+</section>
+<div class="health-layout"><section class="panel detail-panel"><h2>Installed</h2>{% for mod in installed %}{% include 'vehicles/build_item.html' %}{% empty %}<p class="muted">No installed modifications yet.</p>{% endfor %}</section><section class="panel detail-panel"><h2>Planned upgrades</h2>{% for mod in planned %}{% include 'vehicles/build_item.html' %}{% empty %}<p class="muted">No planned upgrades yet.</p>{% endfor %}</section></div>
+{% endblock %}

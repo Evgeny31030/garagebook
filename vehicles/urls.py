@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from . import views, feature_views
 
 
 urlpatterns = [
@@ -22,5 +22,12 @@ urlpatterns = [
         views.maintenance_plan_delete,
         name="maintenance_plan_delete",
     ),
+    path("vehicles/<int:pk>/health/", feature_views.car_health, name="car_health"),
+    path("vehicles/<int:pk>/health/<str:component>/", feature_views.component_edit, name="component_edit"),
+    path("vehicles/<int:pk>/health/<str:component>/replacement/new/", feature_views.component_replacement_create, name="component_replacement_create"),
+    path("vehicles/<int:pk>/build/", feature_views.build_tracker, name="build_tracker"),
+    path("vehicles/<int:pk>/build/new/", feature_views.modification_edit, name="modification_create"),
+    path("vehicles/<int:pk>/build/<int:mod_pk>/edit/", feature_views.modification_edit, name="modification_edit"),
+    path("vehicles/<int:pk>/build/<int:mod_pk>/delete/", feature_views.modification_delete, name="modification_delete"),
     path("vehicles/<int:pk>/", views.vehicle_detail, name="vehicle_detail"),
 ]
